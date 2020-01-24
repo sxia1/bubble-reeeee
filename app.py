@@ -91,6 +91,22 @@ def logout():
         session.pop('user')
     return redirect('/')
 
+@app.route('/socketioTest')
+def socketioTest():
+    '''
+    Test page for SocketIO
+    '''
+    return render_template("socketioTest.html")
+
+@socketio.on('connect')
+def userConnect():
+    join_room("testRoom")
+    print(f"A user has connected with sid {request.sid}")
+
+@socketio.on('sendHi')
+def sendHi():
+    emit('receiveHi', broadcast = True, room = 'testRoom')
+
 if __name__ == '__main__':
     app.debug = True
     socketio.run(app)
