@@ -1,9 +1,11 @@
 import os, random, json, urllib
+from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 from util import Database
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(32)
+socketio = SocketIO(app)
 
 app.config["MONGO_DBNAME"] = os.environ["databaseName"]
 app.config["MONGO_URI"] = os.environ["mongoURI"]
@@ -91,4 +93,4 @@ def logout():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    socketio.run(app)
