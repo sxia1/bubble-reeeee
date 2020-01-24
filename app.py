@@ -2,7 +2,8 @@ import os, random, json, urllib
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 from util import config, db
 from boto.s3.connection import S3Connection
-s3 = S3Connection(os.environ['admin']. os.environ['admin'])
+
+s3 = S3Connection(os.environ['admin'])
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(32)
