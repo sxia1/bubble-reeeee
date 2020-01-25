@@ -100,10 +100,45 @@ def socketioTest():
     '''
     return render_template("socketioTest.html")
 
-@socketio.on('connect')
+@app.route('/document/<documentID>')
+def documentPage(documentID):
+    '''
+    Page to display the document
+    '''
+    docIsPublic = True # Check if the document is public
+    if docIsPublic:
+        return render_template("document.html")
+    if "user" in session:
+        userHasPermission = True # Check if the current user has access to the document
+        if userHasPermission:
+            return render_template("document.html")
+        else: # User does not have permission to view the document
+            return redirect("/")
+    return redirect("/login") # User is not logged in, redirect to login
+
+@socketio.on('connect', namespace = '/document')
+def connectToDoc():
+    print(f"A user has connected to a document page with sid {request.sid}")
+
+@socketio.on('joinDocument', namespace = '/document')
+def joinDocument(documentID):
+    docIsPublic = True # Check if the document is public
+    if docIsPublic:
+        join_room(documentID)
+        return
+    if "user" in session:
+        userHasPermission = True # Check if the current user has access to the document
+        if userHasPermission:
+            join_room(documentID)
+        else:
+            send('This user does not have permission to access the requested document.')
+    else:
+        send('This user is not logged in.')
+
+@socketio.on('connect', namespace = '/socketioTest')
 def userConnect():
     join_room("testRoom")
-    print("A user has connected with sid {request.sid}")
+    print(f"A user has connected to the test page with sid {request.sid}")
 
 @socketio.on('sendHi')
 def sendHi():
