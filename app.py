@@ -2,13 +2,6 @@ import os, random, json, urllib
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 from util import Database
-from PIL import Imagefile
-from pdf2image import convert_from_path, conver_from_bytes
-from pdf2image.exceptions import(
-	PDFInfoNotInstalledError,
-	PDFPageCountError,
-	PDFSyntaxError
-)
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(32)
@@ -18,18 +11,6 @@ app.config["MONGO_DBNAME"] = os.environ["databaseName"]
 app.config["MONGO_URI"] = os.environ["mongoURI"]
 
 dbtools = Database.DBTools(app)
-
-print(dbtools.createDocID())
-dbtools.addUser('sophia', '123')
-print(dbtools.userExists('sophia'))
-print(dbtools.authPassword('sophia', '123'))
-print(dbtools.authPassword('sophia', '234'))
-
-image = convert_from_bytes(open('~/bubble-reeeee/example.pdf', 'rb').read())
-
-overlay = open('img.png', 'rb').read()
-#print(dbtools.addDoc('sophia', 'document1', f))
-dbtools.updateOverlay('VxJJue7I', overlay)
 
 lineStorage = { # Setup for temporary line storage may change depending on support for multiple pages
     # documentID : {
@@ -68,7 +49,7 @@ def login_auth():
     '''
     username = request.form['username']
     password = request.form['password']
-    if db.auth_user(username, password):
+    if db.authUser(username, password):
         session['user'] = username
         flash("You have logged in")
         return redirect('/')
@@ -95,7 +76,7 @@ def register_auth():
     if username == "": # no username entered
         flash("Enter a username")
         return redirect(url_for('signup'))
-    if not db.registered(username): # username unavailable
+    if not db.userExists(username): # username unavailable
         flash("Choose a different username")
         return redirect(url_for('signup'))
     elif password == "": # no password entered 
@@ -105,12 +86,12 @@ def register_auth():
         flash("Passwords do not match")
         return redirect(url_for('signup'))
     else:
-        if db.add_user(username, password):
+        if db.addUser(username, password):
             flash("You have successfully registered")
         else: 
             flash("This username is already in use")
             return redirect(url_for('signup'))
-    db.auth_user(username, password)
+    db.authUser(username, password)
     session['user'] = username
     return redirect('/')
 

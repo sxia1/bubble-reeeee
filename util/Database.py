@@ -26,7 +26,7 @@ class DBTools:
 	def userExists(self, username):
 		return self.mongo.db.users.find({'username' : username}).limit(1).count() == 1
 
-	def authPassword(self, username, password):
+	def authUser(self, username, password):
 		pwd = self.mongo.db.users.find({'username' : username}).limit(1)[0]['password']
 		return sha256_crypt.verify(password, pwd)
 
