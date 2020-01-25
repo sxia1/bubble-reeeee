@@ -12,6 +12,7 @@ app.config["MONGO_URI"] = os.environ["mongoURI"]
 
 dbtools = Database.DBTools(app)
 
+print(dbtools.createDocID())
 
 
 @app.route('/')
