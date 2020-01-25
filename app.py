@@ -49,7 +49,7 @@ def login_auth():
     '''
     username = request.form['username']
     password = request.form['password']
-    if db.authUser(username, password):
+    if dbtools.authUser(username, password):
         session['user'] = username
         flash("You have logged in")
         return redirect('/')
@@ -86,12 +86,12 @@ def register_auth():
         flash("Passwords do not match")
         return redirect(url_for('signup'))
     else:
-        if db.addUser(username, password):
+        if dbtools.addUser(username, password):
             flash("You have successfully registered")
         else: 
             flash("This username is already in use")
             return redirect(url_for('signup'))
-    db.authUser(username, password)
+    dbtools.authUser(username, password)
     session['user'] = username
     return redirect('/')
 
