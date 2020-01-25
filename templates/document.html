@@ -3,12 +3,10 @@
 {% block title %}SocketIO Test Page{% endblock %}
 
 {% block content %}
-    <button id="hiButton">Send a Hi!</button>
-    <ul id='hiList'>
-    </ul>
+    <canvas id='mainCanvas' height="500" width="720" style='border: 1px solid black'></canvas>
 {% endblock %}
 
 {% block extraScripts %}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/wstest.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/wsdocument.js') }}"></script>
 {% endblock %}
