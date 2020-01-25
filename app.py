@@ -141,7 +141,7 @@ def userConnect():
     join_room("testRoom")
     print(f"A user has connected to the test page with sid {request.sid}")
 
-@socketio.on('sendHi')
+@socketio.on('sendHi', namespace = '/socketioTest')
 def sendHi():
     emit('receiveHi', broadcast = True, room = 'testRoom')
 
