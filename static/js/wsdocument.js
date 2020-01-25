@@ -3,6 +3,7 @@ var socket = io.connect(protocol + '//' + document.domain + ':' + location.port 
 
 var canvas = document.getElementById('mainCanvas');
 var ctx = canvas.getContext('2d');
+ctx.lineCap = 'round';
 
 var lineWidth = 3;
 var color = 'rgba(0,0,0,1)';
@@ -44,15 +45,16 @@ socket.on('message', function(msg) {
 });
 
 canvas.addEventListener('mousedown', function(e) {
+    console.log(1);
     prevX = e.offsetX;
     prevY = e.offsetY;
     isDrawing = true;
-    drawLine(prevX, prevY, prevX, prevY, color);
+    drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
 });
 
 canvas.addEventListener('mousemove', function(e) {
     if (isDrawing) {
-        drawLine(prevX, prevY, e.offsetX, e.offsetY, color);
+        drawLine(prevX, prevY, e.offsetX, e.offsetY, lineWidth, color);
         prevX = e.offsetX;
         prevY = e.offsetY;
     }
