@@ -14,6 +14,18 @@ dbtools = Database.DBTools(app)
 
 print(dbtools.createDocID())
 
+lineStorage = { # Setup for temporary line storage may change depending on support for multiple pages
+    # documentID : {
+    #     'connectedUsers' : {request.sid},
+    #     'lines' : [
+    #         [x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)']
+    #     ]
+    # }
+}
+
+connectedUsers = {
+    # request.sid : documentID
+}
 
 @app.route('/')
 def root():
@@ -121,20 +133,48 @@ def documentPage(documentID):
 def connectToDoc():
     print(f"A user has connected to a document page with sid {request.sid}")
 
+@socketio.on('disconnect', namespace = '/document')
+def disconnectFromDoc():
+    print(f"{request.sid} disconnected")
+    lineStorage[connectedUsers[request.sid]]['connectedUsers'].remove(request.sid)
+    print(lineStorage[connectedUsers[request.sid]]['connectedUsers'])
+    print(f"{len(lineStorage[connectedUsers[request.sid]]['connectedUsers'])} users remaining in {connectedUsers[request.sid]}")
+    if len(lineStorage[connectedUsers[request.sid]]['connectedUsers']) == 0:
+        lineStorage.pop(connectedUsers[request.sid])
+    connectedUsers.pop(request.sid)
+
 @socketio.on('joinDocument', namespace = '/document')
 def joinDocument(documentID):
     docIsPublic = True # Check if the document is public
+    successfulJoin = False
     if docIsPublic:
         join_room(documentID)
-        return
-    if "user" in session:
+        successfulJoin = True
+    elif "user" in session:
         userHasPermission = True # Check if the current user has access to the document
         if userHasPermission:
             join_room(documentID)
+            successfulJoin = True
         else:
             send('This user does not have permission to access the requested document.')
     else:
         send('This user is not logged in.')
+    if successfulJoin:
+        if documentID not in lineStorage: # Document not being viewed yet
+            lineStorage[documentID] = {
+                'connectedUsers' : {request.sid},
+                'lines' : []
+            }
+        else: # Document already being viewed
+            lineStorage[documentID]['connectedUsers'].add(request.sid)
+            emit('lines', lineStorage[documentID]['lines'])
+        connectedUsers[request.sid] = documentID
+
+@socketio.on('newLine', namespace = '/document')
+def newLine(line):
+    documentID = connectedUsers[request.sid]
+    lineStorage[documentID]['lines'].append(line)
+    emit('newLine', line, broadcast = True, include_self = False, room = documentID)
 
 @socketio.on('connect', namespace = '/socketioTest')
 def userConnect():
