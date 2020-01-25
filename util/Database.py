@@ -1,5 +1,6 @@
 import random, os, string
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from passlib.hash import sha256_crypt # password hashing -- sha256_crypt.hash(hash_this)
 
 CHARSET = string.ascii_uppercase + string.ascii_lowercase + string.digits
@@ -10,31 +11,35 @@ class DBTools:
 
 	def createDocID(self):
 		ID = ''.join(random.choice(CHARSET) for x in range(8))
-		print(ID)
 		while(self.mongo.db.docs.find({'docID': ID}).limit(1).count() != 0):
 			ID = ''.join(random.choice(CHARSET) for x in range(8))
 		return ID
 
 	def addUser(self, username, password):
-		self.mongo.db.users.insert({
-			'username' : username,
-			'password' : sha256_crypt.hash(password)
-		})
+		if not self.userExists(username):
+			self.mongo.db.users.insert({
+				'username' : username,
+				'password' : sha256_crypt.hash(password)
+			})
+		return "username already taken"
 	
 	def userExists(self, username):
-		self.mongo.db.users.find({'username' : username})
+		return self.mongo.db.users.find({'username' : username}).limit(1).count() == 1
 
 	def authPassword(self, username, password):
-		pwd = self.mongo.db.users.find({'username' : username})['password']
+		pwd = self.mongo.db.users.find({'username' : username}).limit(1)[0]['password']
 		return sha256_crypt.verify(password, pwd)
 
-	def addDoc(self, username, docName, overlay):
+	def addDoc(self, username, docName, fname):
+		ID = self.createDocID()
 		self.mongo.db.docs.insert({
 			'owner' : username,
-			'docID' : createDocID(),
+			'docID' : ID,
 			'document_name' : docName,
-			'overlay' : overlay
+			'file' : fname,
+			'overlay' : None
 		})
+		return ID
 
 	def addCollab(self, docID, collab, start, duration):
 		self.mongo.db.collabs.insert({
@@ -51,7 +56,6 @@ class DBTools:
 			'start' : start,
 			'duration' : duration
 		})
-
 
 	def updateOverlay(self, docID, newOverlay):
 		self.mongo.db.docs.updateOne(
