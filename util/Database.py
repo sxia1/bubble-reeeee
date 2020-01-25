@@ -9,9 +9,10 @@ class DBTools:
 		self.mongo = PyMongo(app)
 
 	def createDocID(self):
-		ID = ''.join(random.choices(CHARSET, 8))
-		while(self.mongo.db.docs.find({'docID': ID}).count() != 0):
-			ID = ''.join(random.choices(CHARSET, 8))
+		ID = ''.join(random.choice(CHARSET) for x in range(8))
+		print(ID)
+		while(self.mongo.db.docs.find({'docID': ID}).limit(1).count() != 0):
+			ID = ''.join(random.choice(CHARSET) for x in range(8))
 		return ID
 
 	def addUser(self, username, password):
