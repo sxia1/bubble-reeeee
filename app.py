@@ -12,6 +12,8 @@ app.config["MONGO_URI"] = os.environ["mongoURI"]
 
 dbtools = Database.DBTools(app)
 
+
+
 @app.route('/')
 def root():
     guest = 'user' not in session
@@ -101,7 +103,7 @@ def socketioTest():
 @socketio.on('connect')
 def userConnect():
     join_room("testRoom")
-    print(f"A user has connected with sid {request.sid}")
+    print("A user has connected with sid {request.sid}")
 
 @socketio.on('sendHi')
 def sendHi():

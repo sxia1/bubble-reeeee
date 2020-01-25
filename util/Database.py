@@ -30,7 +30,7 @@ class DBTools:
 	def addDoc(self, username, docName, overlay):
 		self.mongo.db.docs.insert({
 			'owner' : username,
-			'docID' : createDocID()
+			'docID' : createDocID(),
 			'document_name' : docName,
 			'overlay' : overlay
 		})
@@ -55,14 +55,12 @@ class DBTools:
 	def updateOverlay(self, docID, newOverlay):
 		self.mongo.db.docs.updateOne(
 			{'docID' : docID},
-			{$set:
-				{'overlay': newOverlay}
-			}
+			{'overlay': newOverlay}
 		)
 
 	def checkAuth(self, username, docID):
 		owner = self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).count()
-		collab = self.mongo.db.collab.find('docID' : docID, 'collab': username).count()
+		collab = self.mongo.db.collabs.find({'docID' : docID, 'collab': username}).count()
 		return owner == 1 or collab == 1
 
 
