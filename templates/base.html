@@ -92,7 +92,7 @@
 	  	<ul>
 			{% if docs %}
 				{% for each in docs %}
-					<a href='/document/'+each[0]>{{each[1]}}</a>
+					<a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a>
 				{% endfor %}
 			{% endif %}
 		</ul>
