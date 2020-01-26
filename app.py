@@ -155,7 +155,7 @@ def documentPage(documentID):
 	'''
 	docIsPublic = dbtools.checkPublic(documentID)
 	if docIsPublic:
-		return render_template("document.html")
+		return render_template("document.html", docId = documentID)
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		if userHasPermission:

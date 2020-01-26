@@ -45,11 +45,19 @@ socket.on('message', function(msg) {
 });
 
 canvas.addEventListener('mousedown', function(e) {
-    console.log(1);
     prevX = e.offsetX;
     prevY = e.offsetY;
     isDrawing = true;
     drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
+});
+
+canvas.addEventListener('touchstart', function(e) {
+    var rect = e.target.getBoundingClientRect();
+    prevX = e.targetTouches[0].pageX - rect.left;
+    prevY = e.targetTouches[0].pageY - rect.top;
+    isDrawing = true;
+    drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
+    e.preventDefault();
 });
 
 canvas.addEventListener('mousemove', function(e) {
@@ -60,12 +68,29 @@ canvas.addEventListener('mousemove', function(e) {
     }
 });
 
+canvas.addEventListener('touchmove', function(e) {
+    var rect = e.target.getBoundingClientRect();
+    offsetX = e.targetTouches[0].pageX - rect.left;
+    offsetY = e.targetTouches[0].pageY - rect.top;
+    if (isDrawing) {
+        drawLine(prevX, prevY, offsetX, offsetY, lineWidth, color);
+        prevX = offsetX;
+        prevY = offsetY;
+    }
+    e.preventDefault();
+});
+
 canvas.addEventListener('mouseout', function(e) {
     isDrawing = false;
 });
 
 canvas.addEventListener('mouseup', function(e) {
     isDrawing = false;
+});
+
+canvas.addEventListener('touchend', function(e) {
+    isDrawing = false;
+    e.preventDefault();
 });
 
 $(function(){
