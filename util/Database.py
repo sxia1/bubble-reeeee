@@ -21,7 +21,8 @@ class DBTools:
 				'username' : username,
 				'password' : sha256_crypt.hash(password)
 			})
-		return "username already taken"
+			return True
+		return False
 	
 	def userExists(self, username):
 		return self.mongo.db.users.find({'username' : username}).limit(1).count() == 1
