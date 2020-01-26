@@ -4,8 +4,7 @@ from flask import Flask, render_template, request, session, url_for, redirect, f
 from util import Database
 from pdf2image import convert_from_bytes
 from bson import Binary
-#from PIL import PngImageFile, Image
-from PIL.PngImagePlugin import PngImageFile
+from PIL import Image
 
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
@@ -124,7 +123,7 @@ def uploadDoc():
 			flash('No file part')
 			return redirect(url_for('root'))
 		pdf = request.files['file']
-		img = convert_from_bytes(pdf.read(), fmt='png')
+		img = convert_from_bytes(pdf.read(), fmt='png', size=(1000, None))
 		if not request.form['docName']:
 			docName = 'untitled'
 		else:
@@ -135,7 +134,7 @@ def uploadDoc():
 			size_list.append(each.size)
 			bson_list.append(each.tobytes())
 		ID = dbtools.addDoc(session['user'], docName, bson_list, size_list)
-		return redirect(url_for('document/' + ID))
+		return redirect('/document/' + ID)
 
 @app.route('/socketioTest')
 def socketioTest():
@@ -145,8 +144,8 @@ def socketioTest():
     return render_template("socketioTest.html")
 
 def serve_pil_image(pil_img):
-	img_io = StringIO()
-	pil_img.save(img_io, 'png', quality=70)
+	img_io = io.BytesIO()
+	pil_img.save(img_io, 'PNG', quality=70)
 	img_io.seek(0)
 	return send_file(img_io, mimetype='image/png')
 
@@ -154,8 +153,7 @@ def serve_pil_image(pil_img):
 def get_image(documentID):
 	num = request.args.get('num', type=int)
 	byteimg = dbtools.getPage(documentID, num)
-	print(byteimg['data'])
-	png = PngImageFile(byteimg['data'])
+	png = Image.frombytes("RGB", byteimg['size'], byteimg['data'])
 	#png.fromstring(byteimg['data'])
 	#img = Image.new(mode='RGB', data=byteimg['data'], size=byteimg['size'])
 	#response = make_response(byteimg['data'])
