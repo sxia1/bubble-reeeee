@@ -122,8 +122,9 @@ def uploadDoc():
 		if 'file' not in request.files:
 			flash('No file part')
 			return redirect(url_for('root'))
-		pdf = request.files['file']
-		img = convert_from_bytes(pdf.read(), fmt='png', size=(1000, None))
+		pdf = request.files['file'].read()
+		print(f"File length: {len(pdf)}")
+		img = convert_from_bytes(pdf, fmt='png', size=(1000, None))
 		if not request.form['docName']:
 			docName = 'untitled'
 		else:
@@ -133,7 +134,6 @@ def uploadDoc():
 		for each in img:
 			size_list.append(each.size)
 			bson_list.append(each.tobytes())
-		print(size_list)
 		ID = dbtools.addDoc(session['user'], docName, bson_list, size_list)
 		return redirect('/document/' + ID)
 
