@@ -3,7 +3,13 @@
 {% block title %}SocketIO Test Page{% endblock %}
 
 {% block content %}
-    <canvas id='mainCanvas' height="500" width="720" style='border: 1px solid black'></canvas>
+
+<a tabindex="0" class="btn btn-lg btn-light" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Collaborate</a>
+
+<embed src={{'/pdf/%s'%docId}} width="500" height="375">
+
+<canvas id='mainCanvas' height="500" width="720" style='border: 1px solid black'></canvas>
+
 {% endblock %}
 
 {% block extraScripts %}

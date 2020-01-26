@@ -1,8 +1,15 @@
 import os, random, json, urllib
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
-from flask import Flask, render_template, request, session, url_for, redirect, flash
+from flask import Flask, render_template, request, session, url_for, redirect, flash, make_response
 from util import Database
 from pdf2image import convert_from_bytes
+from bson import Binary
+
+from pdf2image.exceptions import (
+    PDFInfoNotInstalledError,
+    PDFPageCountError,
+    PDFSyntaxError
+)
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(32)
@@ -108,13 +115,22 @@ def logout():
         session.pop('user')
     return redirect('/')
 
-@app.route('/uploadDoc')
+@app.route('/uploadDoc', methods=['POST'])
 def uploadDoc():
-	if request.files:
-		docName = request.form['docName']
-		pdf = request.files['pdf']
-		img = convert_from_bytes(open(pdf, 'rb').read())
-		ID = dbtools.addDoc(session['user'], docName, img)
+	if request.method == 'POST':
+		if 'file' not in request.files:
+			flash('No file part')
+			return redirect(url_for('root'))
+		pdf = request.files['file']
+		img = convert_from_bytes(pdf.read())
+		if not request.form['docName']:
+			docName = 'untitled'
+		else:
+			docName = request.form['docName']
+		bson_list = []
+		for each in img:
+			bson_list.append(bytearray(open(each).read()))
+		ID = dbtools.addDoc(session['user'], docName, bson_list)
 		return redirect(url_for('document/' + ID))
 
 @app.route('/socketioTest')
@@ -124,21 +140,29 @@ def socketioTest():
     '''
     return render_template("socketioTest.html")
 
+@app.route('/pdf/<documentID>')
+def get_pdf(documentID):
+	binary_pdf = dbtools.getDoc(session['user'], documentID)
+	response = make_response(binary_pdf)
+	response.headers['Content-Type'] = 'application/pdf'
+	#response.headers['Content-Disposition'] = 'inline'
+	return response
+
 @app.route('/document/<documentID>')
 def documentPage(documentID):
-    '''
-    Page to display the document
-    '''
-    docIsPublic = True # Check if the document is public
-    if docIsPublic:
-        return render_template("document.html")
-    if "user" in session:
-        userHasPermission = True # Check if the current user has access to the document
-        if userHasPermission:
-            return render_template("document.html")
-        else: # User does not have permission to view the document
-            return redirect("/")
-    return redirect("/login") # User is not logged in, redirect to login
+	'''
+	Page to display the document
+	'''
+	docIsPublic = dbtools.checkPublic(documentID)
+	if docIsPublic:
+		return render_template("document.html")
+	if "user" in session:
+		userHasPermission = dbtools.checkAuth(session['user'], documentID)
+		if userHasPermission:
+			return render_template("document.html", docId = documentID)
+		else:# User does not have permission to view the document
+			return redirect("/")
+	return redirect("/login") # User is not logged in, redirect to login
 
 @socketio.on('connect', namespace = '/document')
 def connectToDoc():

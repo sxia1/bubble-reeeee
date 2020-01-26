@@ -1,6 +1,5 @@
 import random, os, string
 from flask_pymongo import PyMongo
-from pymongo import MongoClient
 from passlib.hash import sha256_crypt # password hashing -- sha256_crypt.hash(hash_this)
 
 CHARSET = string.ascii_uppercase + string.ascii_lowercase + string.digits
@@ -39,16 +38,18 @@ class DBTools:
 		self.mongo.db.docs.insert({
 			'owner' : username,
 			'docID' : ID,
+			'public' : False,
 			'document_name' : docName,
 			'file' : fname,
 			'overlay' : None
 		})
 		return ID
 
-	def addCollab(self, docID, collab, start, duration):
+	def addCollab(self, docID, collab, write, start, duration):
 		self.mongo.db.collabs.insert({
 			'docID' : docID,
 			'collab' : collab,
+			'write' : write,
 			'start' : start,
 			'duration' : duration
 		})
@@ -68,13 +69,24 @@ class DBTools:
 		)
 
 	def checkAuth(self, username, docID):
-		owner = self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).count()
+		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)[0]
 		collab = self.mongo.db.collabs.find({'docID' : docID, 'collab': username}).count()
-		return owner == 1 or collab == 1
+		return doc['owner'] == username or collab
+
+	def checkPublic(self, docID):
+		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)
+		if doc:
+			return doc[0]['public']
+		return False
+
+	def checkWrite(self, username, docID):
+		doc = self.mongo.db.collabs.find({'docID' : docID}).limit(1)
+		if doc:
+			return doc[0]['write']
+		return False
 
 	def getDoc(self, username, docID):
-		if self.checkAuth(username, docID):
-			return self.mongo.db.docs.find({'docID' : docID}).limit(1)[0]
+		return self.mongo.db.docs.find({'docID' : docID}).limit(1)[0]['file']
 
 	def getAllDocs(self, username):
 		c = self.mongo.db.docs.find({'owner' : username})

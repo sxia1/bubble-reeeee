@@ -67,3 +67,7 @@ canvas.addEventListener('mouseout', function(e) {
 canvas.addEventListener('mouseup', function(e) {
     isDrawing = false;
 });
+
+$(function(){
+	$('[data-toggle="popover"]').popover();
+});
