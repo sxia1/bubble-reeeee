@@ -52,12 +52,16 @@ canvas.addEventListener('mousedown', function(e) {
 });
 
 canvas.addEventListener('touchstart', function(e) {
-    var rect = e.target.getBoundingClientRect();
-    prevX = e.targetTouches[0].pageX - rect.left;
-    prevY = e.targetTouches[0].pageY - rect.top;
-    isDrawing = true;
-    drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
-    e.preventDefault();
+    if (e.touches.length == 1) {
+        var rect = e.target.getBoundingClientRect();
+        prevX = e.targetTouches[0].pageX - rect.left;
+        prevY = e.targetTouches[0].pageY - rect.top;
+        isDrawing = true;
+        drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+    }
 });
 
 canvas.addEventListener('mousemove', function(e) {
@@ -69,15 +73,19 @@ canvas.addEventListener('mousemove', function(e) {
 });
 
 canvas.addEventListener('touchmove', function(e) {
-    var rect = e.target.getBoundingClientRect();
-    offsetX = e.targetTouches[0].pageX - rect.left;
-    offsetY = e.targetTouches[0].pageY - rect.top;
-    if (isDrawing) {
-        drawLine(prevX, prevY, offsetX, offsetY, lineWidth, color);
-        prevX = offsetX;
-        prevY = offsetY;
+    if (e.touches.length == 1) {
+        var rect = e.target.getBoundingClientRect();
+        offsetX = e.targetTouches[0].pageX - rect.left;
+        offsetY = e.targetTouches[0].pageY - rect.top;
+        if (isDrawing) {
+            drawLine(prevX, prevY, offsetX, offsetY, lineWidth, color);
+            prevX = offsetX;
+            prevY = offsetY;
+        }
+        if (e.cancelable) {
+            e.preventDefault();
+        }
     }
-    e.preventDefault();
 });
 
 canvas.addEventListener('mouseout', function(e) {
@@ -90,7 +98,9 @@ canvas.addEventListener('mouseup', function(e) {
 
 canvas.addEventListener('touchend', function(e) {
     isDrawing = false;
-    e.preventDefault();
+    if (e.cancelable) {
+        e.preventDefault();
+    }
 });
 
 $(function(){
