@@ -1,9 +1,11 @@
-import os, random, json, urllib
+import os, random, json, urllib, sys
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash, make_response
 from util import Database
 from pdf2image import convert_from_bytes
 from bson import Binary
+from PIL import Image
+from gridfs import GridFS
 
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
@@ -122,14 +124,15 @@ def uploadDoc():
 			flash('No file part')
 			return redirect(url_for('root'))
 		pdf = request.files['file']
-		img = convert_from_bytes(pdf.read())
+		img = convert_from_bytes(pdf.read(), fmt='png')
 		if not request.form['docName']:
 			docName = 'untitled'
 		else:
 			docName = request.form['docName']
 		bson_list = []
 		for each in img:
-			bson_list.append(bytearray(open(each).read()))
+			bson_list.append(each.tobytes())
+			print(sys.getsizeof(each))
 		ID = dbtools.addDoc(session['user'], docName, bson_list)
 		return redirect(url_for('document/' + ID))
 
@@ -140,13 +143,18 @@ def socketioTest():
     '''
     return render_template("socketioTest.html")
 
-@app.route('/pdf/<documentID>')
+@app.route('/image/<documentID>')
 def get_pdf(documentID):
-	binary_pdf = dbtools.getDoc(session['user'], documentID)
-	response = make_response(binary_pdf)
-	response.headers['Content-Type'] = 'application/pdf'
+	num = request.args.get('num', type=int)
+	#binary_pdf = dbtools.getDoc(session['user'], documentID)
+	#response = make_response(binary_pdf)
+	#response.headers['Content-Type'] = 'application/pdf'
 	#response.headers['Content-Disposition'] = 'inline'
-	return response
+	#return response
+	byteimg = dbtools.getPage(documentID, num)
+	png = Image.fromstring(load_read(byteimg))
+	return png
+	
 
 @app.route('/document/<documentID>')
 def documentPage(documentID):
@@ -159,7 +167,11 @@ def documentPage(documentID):
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		if userHasPermission:
-			return render_template("document.html", docId = documentID)
+			length = dbtools.checkLength(documentID)
+			URLS = []
+			for x in range(length):
+				URLS.append(documentID + '?num=' + str(x))
+			return render_template("document.html", URLS = URLS)
 		else:# User does not have permission to view the document
 			return redirect("/")
 	return redirect("/login") # User is not logged in, redirect to login
