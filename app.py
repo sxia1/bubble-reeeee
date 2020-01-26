@@ -133,6 +133,7 @@ def uploadDoc():
 		for each in img:
 			size_list.append(each.size)
 			bson_list.append(each.tobytes())
+		print(size_list)
 		ID = dbtools.addDoc(session['user'], docName, bson_list, size_list)
 		return redirect('/document/' + ID)
 
