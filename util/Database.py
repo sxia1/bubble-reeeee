@@ -28,7 +28,10 @@ class DBTools:
 		return self.mongo.db.users.find({'username' : username}).limit(1).count() == 1
 
 	def authUser(self, username, password):
-		pwd = self.mongo.db.users.find({'username' : username}).limit(1)[0]['password']
+		c = self.mongo.db.users.find({'username' : username}).limit(1)
+		if c.count() == 0:
+			return False
+		pwd = c[0]['password']
 		return sha256_crypt.verify(password, pwd)
 
 	def addDoc(self, username, docName, fname):
