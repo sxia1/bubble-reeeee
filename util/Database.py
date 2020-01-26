@@ -38,12 +38,24 @@ class DBTools:
 		self.mongo.db.docs.insert({
 			'owner' : username,
 			'docID' : ID,
+			'length' : len(fname),
 			'public' : False,
 			'document_name' : docName,
-			'file' : fname,
 			'overlay' : None
 		})
+		for x in range(len(fname)):
+			self.mongo.db.img.insert({
+				'docID' : ID,
+				'num' : x,
+				'data' : fname[x]
+			})
 		return ID
+
+	def checkLength(self, docID):
+		doc = self.mongo.db.docs.find({'docID' : docID})
+		if doc:
+			return doc[0]['length']
+		return 0
 
 	def addCollab(self, docID, collab, write, start, duration):
 		self.mongo.db.collabs.insert({
@@ -85,8 +97,8 @@ class DBTools:
 			return doc[0]['write']
 		return False
 
-	def getDoc(self, username, docID):
-		return self.mongo.db.docs.find({'docID' : docID}).limit(1)[0]['file']
+	def getPage(self, username, docID, num):
+		return self.mongo.db.docs.find({'docID' : docID, 'num' : num})
 
 	def getAllDocs(self, username):
 		c = self.mongo.db.docs.find({'owner' : username})
