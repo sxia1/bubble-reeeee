@@ -54,8 +54,9 @@ canvas.addEventListener('mousedown', function(e) {
 canvas.addEventListener('touchstart', function(e) {
     if (e.touches.length == 1) {
         var rect = e.target.getBoundingClientRect();
-        prevX = e.targetTouches[0].pageX - rect.left;
-        prevY = e.targetTouches[0].pageY - rect.top;
+        var bodyRect = document.body.getBoundingClientRect();
+        prevX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
+        prevY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
         isDrawing = true;
         drawLine(prevX, prevY, prevX, prevY, lineWidth, color);
         if (e.cancelable) {
@@ -75,8 +76,9 @@ canvas.addEventListener('mousemove', function(e) {
 canvas.addEventListener('touchmove', function(e) {
     if (e.touches.length == 1) {
         var rect = e.target.getBoundingClientRect();
-        offsetX = e.targetTouches[0].pageX - rect.left;
-        offsetY = e.targetTouches[0].pageY - rect.top;
+        var bodyRect = document.body.getBoundingClientRect();
+        offsetX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
+        offsetY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
         if (isDrawing) {
             drawLine(prevX, prevY, offsetX, offsetY, lineWidth, color);
             prevX = offsetX;
