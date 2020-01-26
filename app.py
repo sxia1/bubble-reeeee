@@ -2,6 +2,7 @@ import os, random, json, urllib
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 from util import Database
+from pdf2image import convert_from_bytes
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.urandom(32)
@@ -27,10 +28,13 @@ connectedUsers = {
 
 @app.route('/')
 def root():
-    guest = 'user' not in session
-    user = None
-    if not guest: user = session['user']
-    return render_template("base.html", guest = guest, user = user)
+	guest = 'user' not in session
+	user = None
+	if not guest:
+		user = session['user']
+		docs = dbtools.getAllDocs(user)
+		return render_template("base.html", guest = guest, user = user, docs = docs)
+	return render_template("base.html", guest = guest, user = user, docs = None)
 
 @app.route('/login')
 def login():
@@ -103,6 +107,15 @@ def logout():
     if 'user' in session:
         session.pop('user')
     return redirect('/')
+
+@app.route('/uploadDoc')
+def uploadDoc():
+	if request.files:
+		docName = request.form['docName']
+		pdf = request.files['pdf']
+		img = convert_from_bytes(open(pdf, 'rb').read())
+		ID = dbtools.addDoc(session['user'], docName, img)
+		return redirect(url_for('document/' + ID))
 
 @app.route('/socketioTest')
 def socketioTest():

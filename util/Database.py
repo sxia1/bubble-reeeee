@@ -72,4 +72,13 @@ class DBTools:
 		collab = self.mongo.db.collabs.find({'docID' : docID, 'collab': username}).count()
 		return owner == 1 or collab == 1
 
+	def getDoc(self, username, docID):
+		if self.checkAuth(username, docID):
+			return self.mongo.db.docs.find({'docID' : docID}).limit(1)[0]
 
+	def getAllDocs(self, username):
+		c = self.mongo.db.docs.find({'owner' : username})
+		ret = []
+		for each in c:
+			ret.append((each['docID'], each['document_name']))
+		return ret
