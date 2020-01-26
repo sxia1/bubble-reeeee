@@ -33,7 +33,7 @@ class DBTools:
 		pwd = c[0]['password']
 		return sha256_crypt.verify(password, pwd)
 
-	def addDoc(self, username, docName, fname):
+	def addDoc(self, username, docName, fname, size):
 		ID = self.createDocID()
 		self.mongo.db.docs.insert({
 			'owner' : username,
@@ -47,6 +47,7 @@ class DBTools:
 			self.mongo.db.img.insert({
 				'docID' : ID,
 				'num' : x,
+				'size' : size[x],
 				'data' : fname[x]
 			})
 		return ID
@@ -97,8 +98,11 @@ class DBTools:
 			return doc[0]['write']
 		return False
 
-	def getPage(self, username, docID, num):
-		return self.mongo.db.docs.find({'docID' : docID, 'num' : num})
+	def getPage(self, docID, num):
+		page = self.mongo.db.img.find({'docID' : docID, 'num' : num})
+		if page:
+			return page.limit(1)[0]
+		return None
 
 	def getAllDocs(self, username):
 		c = self.mongo.db.docs.find({'owner' : username})

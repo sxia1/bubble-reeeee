@@ -1,11 +1,11 @@
-import os, random, json, urllib, sys
+import os, random, json, urllib, sys, io
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
-from flask import Flask, render_template, request, session, url_for, redirect, flash, make_response
+from flask import Flask, render_template, request, session, url_for, redirect, flash, make_response, send_file
 from util import Database
 from pdf2image import convert_from_bytes
 from bson import Binary
-from PIL import Image
-from gridfs import GridFS
+#from PIL import PngImageFile, Image
+from PIL.PngImagePlugin import PngImageFile
 
 from pdf2image.exceptions import (
     PDFInfoNotInstalledError,
@@ -130,10 +130,11 @@ def uploadDoc():
 		else:
 			docName = request.form['docName']
 		bson_list = []
+		size_list = []
 		for each in img:
+			size_list.append(each.size)
 			bson_list.append(each.tobytes())
-			print(sys.getsizeof(each))
-		ID = dbtools.addDoc(session['user'], docName, bson_list)
+		ID = dbtools.addDoc(session['user'], docName, bson_list, size_list)
 		return redirect(url_for('document/' + ID))
 
 @app.route('/socketioTest')
@@ -143,17 +144,25 @@ def socketioTest():
     '''
     return render_template("socketioTest.html")
 
+def serve_pil_image(pil_img):
+	img_io = StringIO()
+	pil_img.save(img_io, 'png', quality=70)
+	img_io.seek(0)
+	return send_file(img_io, mimetype='image/png')
+
 @app.route('/image/<documentID>')
-def get_pdf(documentID):
+def get_image(documentID):
 	num = request.args.get('num', type=int)
-	#binary_pdf = dbtools.getDoc(session['user'], documentID)
-	#response = make_response(binary_pdf)
-	#response.headers['Content-Type'] = 'application/pdf'
-	#response.headers['Content-Disposition'] = 'inline'
-	#return response
 	byteimg = dbtools.getPage(documentID, num)
-	png = Image.fromstring(load_read(byteimg))
-	return png
+	print(byteimg['data'])
+	png = PngImageFile(byteimg['data'])
+	#png.fromstring(byteimg['data'])
+	#img = Image.new(mode='RGB', data=byteimg['data'], size=byteimg['size'])
+	#response = make_response(byteimg['data'])
+	#response = send_file(io.BytesIO(png), mimetype='image/png', attachment_filename)
+	#response.headers['Content-Type'] = 'image/png'
+	#response.headers['Content-Disposition'] = 'inline'
+	return serve_pil_image(png)
 	
 
 @app.route('/document/<documentID>')
