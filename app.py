@@ -76,7 +76,7 @@ def register_auth():
     if username == "": # no username entered
         flash("Enter a username")
         return redirect(url_for('signup'))
-    if not dbtools.userExists(username): # username unavailable
+    if dbtools.userExists(username): # username unavailable
         flash("Choose a different username")
         return redirect(url_for('signup'))
     elif password == "": # no password entered 
