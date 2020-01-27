@@ -49,8 +49,6 @@ def login():
     '''
     login page
     '''
-    guest = 'user' not in session
-    if not guest:
         return redirect('/')
     return render_template('login.html', guest = guest)
 
@@ -177,9 +175,11 @@ def documentPage(documentID):
 		if userHasPermission:
 			length = dbtools.checkLength(documentID)
 			URLS = []
+			DIMENSIONS = []
 			for x in range(length):
 				URLS.append(documentID + '?num=' + str(x))
-			return render_template("document.html", URLS = URLS)
+				DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
+			return render_template("document.html", URLS = zip(URLS,DIMENSIONS))
 		else:# User does not have permission to view the document
 			return redirect("/")
 	return redirect("/login") # User is not logged in, redirect to login

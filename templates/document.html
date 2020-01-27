@@ -28,18 +28,19 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
       </div>
 </div>
+<div class="doc"> 
+{% for n,s in URLS %}
+<div class="pages">
+    <canvas id="mainCanvas" class="canv"  style='border: 1px solid black; background-image: url({{'/image/%s'%n}});' width="{{s[0]}}" height="{{s[1]}}" ></canvas>
+    <p>{{n.split("=")[1]}}</p>
+</div>
 
-{% for each in URLS %}
-<img src={{'/image/%s'%each}}>
 {% endfor %}
-
-<canvas id='mainCanvas' height="500" width="720" style='border: 1px solid black'></canvas>
-
+</div>
 {% endblock %}
 
 {% block extraScripts %}

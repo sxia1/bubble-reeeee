@@ -104,7 +104,3 @@ canvas.addEventListener('touchend', function(e) {
         e.preventDefault();
     }
 });
-
-$(function(){
-	$('[data-toggle="popover"]').popover();
-});
