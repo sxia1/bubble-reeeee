@@ -49,6 +49,8 @@ def login():
     '''
     login page
     '''
+    guest = 'user' not in session
+    if not guest:
         return redirect('/')
     return render_template('login.html', guest = guest)
 
