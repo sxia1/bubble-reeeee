@@ -25,7 +25,7 @@ lineStorage = { # Setup for temporary line storage may change depending on suppo
     # documentID : {
     #     'connectedUsers' : {request.sid},
     #     'lines' : [
-    #         [x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)']
+    #         [page, x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)']
     #     ]
     # }
 }

@@ -35,7 +35,7 @@
 <div class="doc"> 
 {% for n,s in URLS %}
 <div class="pages">
-    <canvas id="mainCanvas" class="canv"  style='border: 1px solid black; background-image: url({{'/image/%s'%n}});' width="{{s[0]}}" height="{{s[1]}}" ></canvas>
+    <canvas class="documentCanvas"  style='border: 1px solid black; background-image: url({{'/image/%s'%n}});' width="{{s[0]}}" height="{{s[1]}}" ></canvas>
     <p>{{n.split("=")[1]}}</p>
 </div>
 
