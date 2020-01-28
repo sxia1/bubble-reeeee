@@ -2,6 +2,7 @@ var protocol = (new URL(document.location)).protocol;
 var socket = io.connect(protocol + '//' + document.domain + ':' + location.port + '/document');
 
 var canvases = document.getElementsByClassName('documentCanvas');
+var pageContainer = document.getElementById('pageContainer');
 var ctxArr = [];
 
 var lineWidth = 3;
@@ -10,6 +11,9 @@ var prevX = 0;
 var prevY = 0;
 var isDrawing = false;
 var eraserMode = false;
+
+var cursorStyle = document.createElement('style');
+document.head.appendChild(cursorStyle);
 
 var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack = true) {
     var ctx = ctxArr[page];
@@ -28,6 +32,18 @@ var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack =
         socket.emit('newLine', [page, x0, y0, x1, y1, inputWidth, inputColor]);
     }
 }
+
+var changeCursor = function() {
+    let newCursor = `cursor: url('data:image/svg+xml;utf8,\
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="32">\
+        <circle cx="12.5" cy="12.5" r="${lineWidth / 2 + 1}" fill-opacity="0" style="stroke: black;"/>\
+        <circle cx="12.5" cy="12.5" r="${lineWidth / 2}" fill-opacity="0" style="stroke: white;"/>\
+      </svg>')
+    12.5 12.5, pointer;`
+    cursorStyle.innerHTML = `.documentCanvas { ${newCursor} }`;
+}
+
+changeCursor();
 
 socket.on('connect', function() { //Executed upon opening the site
     var documentID = (new URL(document.location)).pathname.split('/').pop();
@@ -104,21 +120,42 @@ for (var page = 0; page < canvases.length; page++) {
         }
     });
     
-    canvases[canvasNum].addEventListener('mouseout', function(e) {
-        isDrawing = false;
-    });
-    
-    canvases[canvasNum].addEventListener('mouseup', function(e) {
-        isDrawing = false;
-    });
-    
-    canvases[canvasNum].addEventListener('touchend', function(e) {
-        isDrawing = false;
-        if (e.cancelable) {
-            e.preventDefault();
-        }
-    });
 }
 
+pageContainer.addEventListener('wheel', function(e) {
+    if (e.target.matches('.documentCanvas')) { //Activated only when a canvas is targetted
+        var change;
+        if (e.deltaY > 0) {
+            change = -1;
+        } else {
+            change = 1;
+        }
+        lineWidth += change;
+        if (lineWidth < 3) { //Clamp min brush size to 3 pixels
+            lineWidth = 3;
+        } else if (lineWidth > 20) { //Clamp max brush size to 20 pixels
+            lineWidth = 20;
+        }
+        changeCursor();
+        e.preventDefault(); //Prevent user from scrolling down the page
+    }
+});
 
+pageContainer.addEventListener('mouseout', function(e) {
+    if (e.target.matches('.documentCanvas')) {
+        isDrawing = false;
+    }
+});
 
+pageContainer.addEventListener('mouseup', function(e) {
+    if (e.target.matches('.documentCanvas')) {
+        isDrawing = false;
+    }
+});
+
+pageContainer.addEventListener('touchend', function(e) {
+    isDrawing = false;
+    if (e.cancelable) {
+        e.preventDefault();
+    }
+});

@@ -33,13 +33,14 @@
       </div>
 </div>
 <div class="doc"> 
-{% for n,s in URLS %}
-<div class="pages">
-    <canvas class="documentCanvas"  style='border: 1px solid black; background-image: url({{'/image/%s'%n}});' width="{{s[0]}}" height="{{s[1]}}" ></canvas>
-    <p>{{n.split("=")[1]}}</p>
-</div>
-
-{% endfor %}
+    <div id="pageContainer">
+        {% for n,s in URLS %}
+            <div class="pages">
+                <canvas class="documentCanvas"  style='border: 1px solid black; background-image: url({{'/image/%s'%n}});' width="{{s[0]}}" height="{{s[1]}}" ></canvas>
+                <p>{{n.split("=")[1]}}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
 
