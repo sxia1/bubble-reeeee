@@ -9,10 +9,16 @@ var color = 'rgba(0,0,0,1)';
 var prevX = 0;
 var prevY = 0;
 var isDrawing = false;
+var eraserMode = false;
 
 var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack = true) {
     var ctx = ctxArr[page];
     ctx.lineWidth = inputWidth;
+    if (inputColor == 'e') { //Eraser mode
+        ctx.globalCompositeOperation = 'destination-out';
+    } else {
+        ctx.globalCompositeOperation = 'source-over';
+    }
     ctx.beginPath();
     ctx.moveTo(x0, y0); //Offset x and y by vector
     ctx.lineTo(x1, y1); //Draw line to center of the next circle
@@ -56,7 +62,7 @@ for (var page = 0; page < canvases.length; page++) {
         prevX = e.offsetX;
         prevY = e.offsetY;
         isDrawing = true;
-        drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, color);
+        drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
     });
 
     canvases[canvasNum].addEventListener('touchstart', function(e) {
@@ -66,7 +72,7 @@ for (var page = 0; page < canvases.length; page++) {
             prevX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
             prevY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
             isDrawing = true;
-            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, color);
+            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
             if (e.cancelable) {
                 e.preventDefault();
             }
@@ -75,7 +81,7 @@ for (var page = 0; page < canvases.length; page++) {
 
     canvases[canvasNum].addEventListener('mousemove', function(e) {
         if (isDrawing) {
-            drawLine(canvasNum, prevX, prevY, e.offsetX, e.offsetY, lineWidth, color);
+            drawLine(canvasNum, prevX, prevY, e.offsetX, e.offsetY, lineWidth, eraserMode ? 'e' : color);
             prevX = e.offsetX;
             prevY = e.offsetY;
         }
@@ -88,7 +94,7 @@ for (var page = 0; page < canvases.length; page++) {
             offsetX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
             offsetY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
             if (isDrawing) {
-                drawLine(canvasNum, prevX, prevY, offsetX, offsetY, lineWidth, color);
+                drawLine(canvasNum, prevX, prevY, offsetX, offsetY, lineWidth, eraserMode ? 'e' : color);
                 prevX = offsetX;
                 prevY = offsetY;
             }
