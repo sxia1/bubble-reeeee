@@ -159,3 +159,15 @@ pageContainer.addEventListener('touchend', function(e) {
         e.preventDefault();
     }
 });
+
+document.getElementById("customFile").addEventListener('change',function(e){
+    var fileName = document.getElementById("customFile").files[0].name;
+    console.log(fileName);
+    var nextSibling = e.target.nextElementSibling;
+    nextSibling.innerText = fileName;
+    document.getElementById("docName").value=fileName;
+})
+
+//$(document).ready(function () {
+//  bsCustomFileInput.init()
+//})

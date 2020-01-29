@@ -26,6 +26,23 @@ r   width: 100%;
     margin: 0 auto;
 }
 
+.uploadFiles {
+    margin-top: 5px;
+}
+
+.uploadFiles .mb-2 {
+    margin: 0 0 0 10px;
+}
+
+.custom-file {
+    width: 200px;
+}
+
+.custom-file-label {
+    text-align: left !important;
+    justify-content: left !important;
+}
+
 .icons {
     right: 15px;
     font-size: 25px;
@@ -54,7 +71,4 @@ r   width: 100%;
 .pages {
     display: inline-block;
     margin: 25px auto;
-}
-
-.canv {
 }

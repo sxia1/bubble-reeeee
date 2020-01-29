@@ -122,6 +122,7 @@ def uploadDoc():
 		if 'file' not in request.files:
 			flash('No file part')
 			return redirect(url_for('root'))
+		print(request.form)
 		pdf = request.files['file'].read()
 		print(f"File length: {len(pdf)}")
 		img = convert_from_bytes(pdf, fmt='png', size=(1000, None))
@@ -170,8 +171,12 @@ def documentPage(documentID):
 	Page to display the document
 	'''
 	docIsPublic = dbtools.checkPublic(documentID)
+	guest = 'user' not in session
+	user = None
+	if not guest:
+		user = session['user']
 	if docIsPublic:
-		return render_template("document.html", docId = documentID)
+		return render_template("document.html", docId = documentID, guest = guest, user = user)
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		if userHasPermission:
@@ -181,7 +186,7 @@ def documentPage(documentID):
 			for x in range(length):
 				URLS.append(documentID + '?num=' + str(x))
 				DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
-			return render_template("document.html", URLS = zip(URLS,DIMENSIONS))
+			return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS))
 		else:# User does not have permission to view the document
 			return redirect("/")
 	return redirect("/login") # User is not logged in, redirect to login

@@ -52,10 +52,12 @@
           </li>
           {% endif %}
         </ul>
-        <form class="form-inline my-2 my-lg-0"> <!-- haven't written any code for this, so it doesn't work -->
+        <!--
+        <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
+        -->
       </div>
     </nav>
 
@@ -86,22 +88,31 @@
       {% endwith %}
     </div>
 
-	<div>
-		{% if not guest %}
-			<form enctype="multipart/form-data" action="/uploadDoc" method="post">
-    			<input name="docName" type="text">
-				<input name="file" type="file" required>
-				<input type="submit" value="Submit">
-			</form>
-		{% endif %}
-	</div>
 
     <div class="content">
       {% block content %}
+        {% if not guest %}
+        <div class="form_block">
+                <form enctype="multipart/form-data" action="/uploadDoc" method="post">
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <input class="form-control" id="docName" name="docName" type="text" placeholder="file_name.pdf">
+                        </div>
+                        <div class="col-auto">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="file" required>
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+                    </div>
+                </form>
+        </div>
+        {% endif %}
 	  	<ul>
 			{% if docs %}
 				{% for each in docs %}
-					<a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a>
+					<li><a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a></li>
 				{% endfor %}
 			{% endif %}
 		</ul>
@@ -111,7 +122,7 @@
     {% block footer %}
     <div class="footer">
       <div class="container center">
-        <span class="text-muted"><a href="https://github.com/rachel-ng">Rachel Ng</a></span>
+        <span class="text-muted"><a href="https://github.com/sxia1/bubble-reeeee">bubble reeeee</a></span>
       </div>
     </div>
     {% endblock %}
@@ -121,7 +132,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-	<script src="{{ url_for('static', filename='js/my.js') }}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/my.js') }}"></script>
 
     {% block extraScripts %}
     {% endblock %}

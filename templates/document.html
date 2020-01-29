@@ -18,6 +18,9 @@
         <div class="modal-body">
             <form>
                 <div class="form-group row">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                    </div>
                     <label for="collaborator"i class="col-auto col-form-label">Collaborator</label>
                     <div class="col-auto">
                         <input type="text" class="form-control" id="collaborator">
@@ -33,6 +36,7 @@
       </div>
 </div>
 <div class="doc"> 
+    <h2>file_name.pdf</h2>
     <div id="pageContainer">
         {% for n,s in URLS %}
             <div class="pages">
