@@ -81,6 +81,11 @@ class DBTools:
 			{'overlay': newOverlay}
 		)
 
+	def getOverlay(self, docID):
+		doc = self.mongo.db.docs.find({'docID' : docID}).limit(1)
+		if doc:
+			return doc[0]['overlay']
+
 	def checkAuth(self, username, docID):
 		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)[0]
 		collab = self.mongo.db.collabs.find({'docID' : docID, 'collab': username}).count()
