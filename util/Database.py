@@ -76,9 +76,11 @@ class DBTools:
 		})
 
 	def updateOverlay(self, docID, newOverlay):
-		self.mongo.db.docs.updateOne(
+		self.mongo.db.docs.update(
 			{'docID' : docID},
-			{'overlay': newOverlay}
+			{'$set': {
+				'overlay' : newOverlay
+			}}
 		)
 
 	def getOverlay(self, docID):

@@ -192,12 +192,14 @@ def connectToDoc():
 
 @socketio.on('disconnect', namespace = '/document')
 def disconnectFromDoc():
+    currDocID = connectedUsers[request.sid]
     print(f"{request.sid} disconnected")
-    lineStorage[connectedUsers[request.sid]]['connectedUsers'].remove(request.sid)
-    print(lineStorage[connectedUsers[request.sid]]['connectedUsers'])
-    print(f"{len(lineStorage[connectedUsers[request.sid]]['connectedUsers'])} users remaining in {connectedUsers[request.sid]}")
-    if len(lineStorage[connectedUsers[request.sid]]['connectedUsers']) == 0:
-        lineStorage.pop(connectedUsers[request.sid])
+    lineStorage[currDocID]['connectedUsers'].remove(request.sid)
+    print(lineStorage[currDocID]['connectedUsers'])
+    print(f"{len(lineStorage[currDocID]['connectedUsers'])} users remaining in {currDocID}")
+    if len(lineStorage[currDocID]['connectedUsers']) == 0:
+        dbtools.updateOverlay(currDocID, lineStorage[currDocID]['lines'])
+        lineStorage.pop(currDocID)
     connectedUsers.pop(request.sid)
 
 @socketio.on('joinDocument', namespace = '/document')
@@ -218,13 +220,16 @@ def joinDocument(documentID):
         send('This user is not logged in.')
     if successfulJoin:
         if documentID not in lineStorage: # Document not being viewed yet
+            receivedLines = dbtools.getOverlay(documentID)
+            if receivedLines == None:
+                receivedLines = []
             lineStorage[documentID] = {
                 'connectedUsers' : {request.sid},
-                'lines' : []
+                'lines' : receivedLines
             }
         else: # Document already being viewed
             lineStorage[documentID]['connectedUsers'].add(request.sid)
-            emit('lines', lineStorage[documentID]['lines'])
+        emit('lines', lineStorage[documentID]['lines'])
         connectedUsers[request.sid] = documentID
 
 @socketio.on('newLine', namespace = '/document')
