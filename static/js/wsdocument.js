@@ -15,6 +15,7 @@ var eraserMode = false;
 var cursorStyle = document.createElement('style');
 document.head.appendChild(cursorStyle);
 
+
 var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack = true) {
     var ctx = ctxArr[page];
     ctx.lineWidth = inputWidth;
@@ -159,14 +160,6 @@ pageContainer.addEventListener('touchend', function(e) {
         e.preventDefault();
     }
 });
-
-document.getElementById("customFile").addEventListener('change',function(e){
-    var fileName = document.getElementById("customFile").files[0].name;
-    console.log(fileName);
-    var nextSibling = e.target.nextElementSibling;
-    nextSibling.innerText = fileName;
-    document.getElementById("docName").value=fileName;
-})
 
 //$(document).ready(function () {
 //  bsCustomFileInput.init()

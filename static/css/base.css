@@ -10,8 +10,9 @@ r   width: 100%;
 }
 
 .content {
-    margin-top: 50px;
+    margin: 50px auto 0 auto;
     flex: 1 0 auto;
+    width: 1000px;
 }
 
 .footer {
@@ -41,6 +42,7 @@ r   width: 100%;
 .custom-file-label {
     text-align: left !important;
     justify-content: left !important;
+    overflow: hidden !important;
 }
 
 .icons {
@@ -62,10 +64,40 @@ r   width: 100%;
     background-color: #000000;
 }
 
+.modal-body {
+    width: 90%;
+    margin: 0 auto;
+}
+
 .doc {
     width: 1000px;
     height: 100%;
     margin: 0 auto;
+}
+
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+.material-icons.md-doc { font-size: .875rem; }
+.material-icons.md-mod { font-size: .875rem; line-height: 1.5; }
+
+.doc_buttons {
+    font-family: 'Inconsolata', monospace;
+}
+
+.doc_buttons_l {
+    font-family: 'Inconsolata', monospace;
+    font-size: 1rem;
+}
+
+.auth_buttons {
+    padding: .125rem .25rem;
+}
+
+.auth_user {
+    margin-bottom: 10px;
 }
 
 .pages {
