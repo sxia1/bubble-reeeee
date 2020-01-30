@@ -18,6 +18,8 @@
 
     <link rel="stylesheet" href="static/css/base.css">
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
   </head>
   <body>
 
@@ -96,30 +98,38 @@
       {% block content %}
         {% if not guest %}
         <div class="form_block">
-                <form enctype="multipart/form-data" action="/uploadDoc" method="post">
-                    <div class="form-group row">
-                        <div class="col-3">
-                            <input class="form-control" id="docName" name="docName" type="text" placeholder="file_name.pdf">
-                        </div>
-                        <div class="col-auto">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="customFile" name="file" required>
-                                <label class="custom-file-label" for="customFile">Choose file</label>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+            <form enctype="multipart/form-data" action="/uploadDoc" method="post">
+                <div class="form-group row">
+                    <div class="col-3">
+                        <input class="form-control" id="docName" name="docName" type="text" placeholder="file_name.pdf">
                     </div>
-                </form>
+                    <div class="col-auto">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" name="file" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit" value="Submit">Submit</button>
+                </div>
+            </form>
         </div>
         {% endif %}
-	  	<ul>
-			{% if docs %}
-				{% for each in docs %}
-					<li><a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a></li>
+        
+        {% if docs %}
+	  	<div class="container">
+            {% for each in docs %}
+                <div class="row">
+                    <div class="col-sm">
+                    <a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a>
+                    </div>
+                    <div class="col-sm">
+                    <button class="btn btn-sm btn-info doc_buttons auth_buttons">owner</button></div>
+                    </div>
+                </div>
 				{% endfor %}
 			{% endif %}
-		</ul>
-	  {% endblock %}
+        </div>
+	    {% endblock %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -127,10 +137,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" crossorigin="anonymous"></script>
-    <script src="static/js/basic.js"></script>
-
+    <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
     {% block extraScripts %}
     {% endblock %}
-    <!-- <script src="../static/js/my.js"></script> -->
   </body>
 </html>
