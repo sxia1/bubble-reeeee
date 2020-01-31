@@ -22,8 +22,9 @@
 
 
 <div class="fixed-bottom tools">
-<input class="jscolor btn btn-circle btn-md tools_buttons" onchange="updatecolor(this.jscolor)" value="000000">
-<button type="button" class="btn btn-primary btn-circle btn-md tools_buttons" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><i class="material-icons md-30">edit</i></button> 
+<input class="jscolor {position:'right'} btn btn-circle btn-md tools_buttons" onchange="updatecolor(this.jscolor)" value="000000">
+<button type="button" id="eraser_button" class="btn btn-light btn-md tools_buttons" onclick="updateeraser(this)"><img height="25" width="auto" src="{{ url_for('static', filename='img/eraser.png') }}"></img></div>
+<!-- <button type="button" class="btn btn-primary btn-md tools_buttons" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "></button> -->
 </div>
  
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

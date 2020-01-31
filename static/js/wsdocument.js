@@ -210,7 +210,20 @@ function updatecolor(jscolor) {
     console.log(color);
 }
 
-
+var eraser_button = document.getElementById('eraser_button');
+function updateeraser(e) {
+    eraserMode=!eraserMode;
+    if (eraser_button.classList.contains("btn-light")) {
+        eraser_button.classList.remove("btn-light");
+        eraser_button.classList.add("btn-dark");
+        eraser_button.childNodes[0].style.filter="invert(100%)";
+    }
+    else if (eraser_button.classList.contains("btn-dark")) {
+        eraser_button.classList.remove("btn-dark");
+        eraser_button.classList.add("btn-light");
+        eraser_button.childNodes[0].style.filter="invert(0)";
+    }
+}
 
 //$(document).ready(function () {
 //  bsCustomFileInput.init()
