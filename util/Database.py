@@ -99,6 +99,14 @@ class DBTools:
 			return doc[0]['public']
 		return False
 
+	def setPublic(self, docID, public):
+		doc.self.mongo.db.docs.update(
+			{'docID' : docId},
+			{'$set' : {
+				'public' : public
+			}}
+		)
+
 	def checkWrite(self, username, docID):
 		doc = self.mongo.db.collabs.find({'docID' : docID}).limit(1)
 		if doc:
