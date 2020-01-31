@@ -184,7 +184,7 @@ def documentPage(documentID):
 			URLS.append(documentID + '?num=' + str(x))
 			DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
 		print(dbtools.checkPublic(documentID))
-		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = dbtools.checkPublic(documentID), owner = False)
+		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = True, owner = dbtools.checkOwner(user,documentID))
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
