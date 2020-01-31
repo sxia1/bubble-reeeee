@@ -58,16 +58,18 @@ class DBTools:
 			return doc[0]['length']
 		return 0
 
-	def addCollab(self, docID, collab, write, start, duration):
+	def addCollab(self, username, docID, collab, write):
+		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
+			return False
 		self.mongo.db.collabs.insert({
 			'docID' : docID,
 			'collab' : collab,
-			'write' : write,
-			'start' : start,
-			'duration' : duration
+			'write' : write
 		})
 
 	def removeCollab(self, docID, collab):
+		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
+			return False
 		self.mongo.db.collabs.remove({
 			'docID' : docID,
 			'collab' : collab,
@@ -99,7 +101,9 @@ class DBTools:
 			return doc[0]['public']
 		return False
 
-	def setPublic(self, docID, public):
+	def setPublic(self, username, docID, public):
+		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
+			return False
 		doc.self.mongo.db.docs.update(
 			{'docID' : docId},
 			{'$set' : {
