@@ -99,6 +99,14 @@ html{
     width: 75px;
 }
 
+.tools_buttons {
+    margin-top: 15px;
+}
+
+.jscolor {
+    font-size: 8px !important;
+}
+
 .auth_buttons {
     padding: .125rem .25rem;
     margin-left: 10px;

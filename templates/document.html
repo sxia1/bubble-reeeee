@@ -22,10 +22,8 @@
 
 
 <div class="fixed-bottom tools">
-<button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
-  Popover on top
-</button>
-<button type="button" class="btn btn-primary btn-circle btn-md" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><i class="material-icons md-30">edit</i></button> 
+<input class="jscolor btn btn-circle btn-md tools_buttons" onchange="updatecolor(this.jscolor)" value="000000">
+<button type="button" class="btn btn-primary btn-circle btn-md tools_buttons" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><i class="material-icons md-30">edit</i></button> 
 </div>
  
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -80,6 +78,7 @@
 {% block extraScripts %}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/wsdocument.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jscolor.js') }}"></script>
     <script> 
     $(document).ready(function(){ 
         $('[data-toggle="popover"]').popover();    
