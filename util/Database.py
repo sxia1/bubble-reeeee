@@ -99,12 +99,17 @@ class DBTools:
 			return doc[0]['public']
 		return False
 
+	def checkOwner(self, username, docID):
+		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
+			return False
+		return True
+    
 	def setPublic(self, username, docID, public):
 		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
 			return False
 		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)
-		doc.self.mongo.db.docs.update(
-			{'docID' : docId},
+		self.mongo.db.docs.update(
+			{'docID' : docID},
 			{'$set' : {
 				'public' : public
 			}}

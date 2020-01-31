@@ -176,9 +176,11 @@ def documentPage(documentID):
 	if not guest:
 		user = session['user']
 	if docIsPublic:
-		return render_template("document.html", docId = documentID, guest = guest, user = user)
+		print(dbtools.checkPublic(documentID))
+		return render_template("document.html", docId = documentID, guest = guest, user = user, public = dbtools.checkPublic(documentID), owner = False)
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
+		print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
 		if userHasPermission:
 			length = dbtools.checkLength(documentID)
 			URLS = []
@@ -186,7 +188,8 @@ def documentPage(documentID):
 			for x in range(length):
 				URLS.append(documentID + '?num=' + str(x))
 				DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
-			return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS))
+			print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
+			return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = dbtools.checkPublic(documentID), owner = dbtools.checkOwner(user,documentID))
 		else:# User does not have permission to view the document
 			return redirect("/")
 	return redirect("/login") # User is not logged in, redirect to login
@@ -268,8 +271,11 @@ def setPublic(public):
     if type(public) != type(True):
         send('Invalid data.')
         return
+    print(dbtools.checkPublic(connectedUsers[request.sid]))
+    print(public)
     dbtools.setPublic(session['user'], connectedUsers[request.sid], public)
-    send('Document visibility set.')
+    print(dbtools.checkPublic(connectedUsers[request.sid]))
+    send('Visibility not changed.')
 
 @socketio.on('connect', namespace = '/socketioTest')
 def userConnect():

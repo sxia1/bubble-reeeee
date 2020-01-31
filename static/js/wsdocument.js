@@ -48,6 +48,7 @@ changeCursor();
 
 var setVisibility = function(public) {
     socket.emit('setVisibility', public);
+    console.log("bwoop");
 }
 
 var addCollab = function(collaborator, write) {
@@ -170,6 +171,26 @@ pageContainer.addEventListener('touchend', function(e) {
     isDrawing = false;
     if (e.cancelable) {
         e.preventDefault();
+    }
+});
+
+var pubpriv = document.getElementById('pubpriv');
+pubpriv.addEventListener("click", function(e) {
+    if (pubpriv.classList.contains("disabled")) {
+        event.preventDefault();
+        return;
+    }
+    if (pubpriv.classList.contains("btn-success")) {
+        setVisibility(false);
+        pubpriv.classList.remove("btn-success");
+        pubpriv.classList.add("btn-danger");
+        pubpriv.innerHTML = 'private <i class="material-icons md-doc">lock</i>'; 
+    }
+    else if (pubpriv.classList.contains("btn-danger")) {
+        setVisibility(true);
+        pubpriv.classList.remove("btn-danger");
+        pubpriv.classList.add("btn-success");
+        pubpriv.innerHTML = 'public <i class="material-icons md-doc">lock_open</i>'; 
     }
 });
 
