@@ -24,6 +24,7 @@ dbtools = Database.DBTools(app)
 lineStorage = { # Setup for temporary line storage may change depending on support for multiple pages
     # documentID : {
     #     'connectedUsers' : {request.sid},
+    #     'write' : {request.sid},
     #     'lines' : [
     #         [page, x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)' or 'e']
     #     ]
@@ -203,6 +204,7 @@ def disconnectFromDoc():
     print(lineStorage[currDocID]['connectedUsers'])
     print(f"{len(lineStorage[currDocID]['connectedUsers'])} users remaining in {currDocID}")
     if len(lineStorage[currDocID]['connectedUsers']) == 0:
+        print('Saved overlay.')
         dbtools.updateOverlay(currDocID, lineStorage[currDocID]['lines'])
         lineStorage.pop(currDocID)
     connectedUsers.pop(request.sid)
@@ -230,18 +232,26 @@ def joinDocument(documentID):
                 receivedLines = []
             lineStorage[documentID] = {
                 'connectedUsers' : {request.sid},
+                'write' : set(),
                 'lines' : receivedLines
             }
         else: # Document already being viewed
             lineStorage[documentID]['connectedUsers'].add(request.sid)
         emit('lines', lineStorage[documentID]['lines'])
         connectedUsers[request.sid] = documentID
+        if 'user' in session and dbtools.checkWrite(session['user'], documentID):
+            lineStorage[documentID]['write'].add(request.sid)
+            emit('enableDraw')
+                
 
 @socketio.on('newLine', namespace = '/document')
 def newLine(line):
     documentID = connectedUsers[request.sid]
-    lineStorage[documentID]['lines'].append(line)
-    emit('newLine', line, broadcast = True, include_self = False, room = documentID)
+    if request.sid not in lineStorage[documentID]['write']:
+        send('You are not permitted to write in this document.')
+    else:
+        lineStorage[documentID]['lines'].append(line)
+        emit('newLine', line, broadcast = True, include_self = False, room = documentID)
 
 @socketio.on('addCollab', namespace = '/document')
 def addCollab(data):
