@@ -10,10 +10,10 @@
         </div>
         <div class="col-sm text-right">
             {% if pub %}
-            <button type="button" class="btn btn-success doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
+            <button type="button" class="btn btn-danger doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
             {% endif %}
             {% if not pub %}
-            <button type="button" class="btn btn-danger doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
+            <button type="button" class="btn btn-success doc_buttons {{ '' if owner else '' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
             {% endif %}
             <button type="button" class="btn btn-secondary doc_buttons" data-toggle="modal" data-target="#exampleModal">collaborate <i class="material-icons md-doc">people_alt</i></button>
         </div>
