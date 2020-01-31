@@ -6,14 +6,14 @@
 
     <div class="row">
         <div class="col-sm">
-        <h2>file_name.pdf</h2>
+        <h2>{{ detail['document_name'] }}</h2>
         </div>
         <div class="col-sm text-right">
-            {% if pub %}
-            <button type="button" class="btn btn-danger doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
+            {% if detail['public'] %}
+            <button type="button" class="btn btn-danger doc_buttons {{ '' if detail['owner'] == user else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
             {% endif %}
-            {% if not pub %}
-            <button type="button" class="btn btn-success doc_buttons {{ '' if owner else '' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
+            {% if not detail['public'] %}
+            <button type="button" class="btn btn-success doc_buttons {{ '' if detail['owner'] == user else '' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
             {% endif %}
             <button type="button" class="btn btn-secondary doc_buttons" data-toggle="modal" data-target="#exampleModal">collaborate <i class="material-icons md-doc">people_alt</i></button>
         </div>
@@ -22,8 +22,8 @@
 
 
 <div class="fixed-bottom tools">
-<input class="jscolor {position:'right'} btn btn-circle btn-md tools_buttons" onchange="updatecolor(this.jscolor)" value="000000">
-<button type="button" id="eraser_button" class="btn btn-light btn-md tools_buttons" onclick="updateeraser(this)"><img height="25" width="auto" src="{{ url_for('static', filename='img/eraser.png') }}"></img></div>
+<input class="jscolor {position:'right', hash:true} btn btn-circle btn-md tools_buttons" onchange="updatecolor(this.jscolor)" value="000000">
+<button type="button" id="eraser_button" class="btn btn-light btn-circle btn-md tools_buttons" onclick="updateeraser(this)"><img height="25" width="auto" src="{{ url_for('static', filename='img/eraser.png') }}"></img></div>
 <!-- <button type="button" class="btn btn-primary btn-md tools_buttons" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "></button> -->
 </div>
  

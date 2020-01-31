@@ -45,25 +45,6 @@ html{
     overflow: hidden !important;
 }
 
-.icons {
-    right: 15px;
-    font-size: 25px;
-    color: #000000;
-    text-decoration: none;
-    transform: scaleX(-1); 
-    position: fixed;
-    z-index: 10000;
-    border-radius: 25px;
-    border: 3px solid #000000;
-    padding: 2.5px 10.5px;
-    margin: 0 auto;
-}
-    
-.icons:hover {
-    color: #ffffff;
-    background-color: #000000;
-}
-
 .modal-body {
     width: 90%;
     margin: 0 auto;
@@ -95,7 +76,7 @@ html{
 
 .tools {
     margin-left: calc(50% - 575px);
-    margin-bottom: 25px;
+    margin-bottom: 50px;
     width: 75px;
 }
 

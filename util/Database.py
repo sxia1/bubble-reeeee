@@ -52,6 +52,12 @@ class DBTools:
 			})
 		return ID
 
+	def getDoc (self, docID): 
+		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)
+		if doc:
+			return doc[0]
+		return False
+	
 	def checkLength(self, docID):
 		doc = self.mongo.db.docs.find({'docID' : docID})
 		if doc:

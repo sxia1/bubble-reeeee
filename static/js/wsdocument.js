@@ -206,7 +206,7 @@ function updatecolor(jscolor) {
     // 'jscolor' instance can be used as a string
     console.log(jscolor);
     console.log(jscolor.valueElement.value);
-    color = "#" + jscolor.valueElement.value;
+    color = jscolor.valueElement.value;
     console.log(color);
 }
 

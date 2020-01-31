@@ -184,7 +184,7 @@ def documentPage(documentID):
 			URLS.append(documentID + '?num=' + str(x))
 			DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
 		print(dbtools.checkPublic(documentID))
-		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = True, owner = dbtools.checkOwner(user,documentID))
+		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), detail = dbtools.getDoc(documentID))
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
@@ -196,7 +196,7 @@ def documentPage(documentID):
 				URLS.append(documentID + '?num=' + str(x))
 				DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
 			print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
-			return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = dbtools.checkPublic(documentID), owner = dbtools.checkOwner(user,documentID))
+			return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), detail = dbtools.getDoc(documentID))
 		else:# User does not have permission to view the document
 			return redirect("/")
 	return redirect("/login") # User is not logged in, redirect to login
