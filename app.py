@@ -26,7 +26,7 @@ lineStorage = { # Setup for temporary line storage may change depending on suppo
     #     'connectedUsers' : {request.sid},
     #     'write' : {request.sid},
     #     'lines' : [
-    #         [page, x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)' or 'e']
+    #         [page, x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)' or 'e', highlighter?]
     #     ]
     # }
 }
