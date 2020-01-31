@@ -14,7 +14,7 @@ var prevY = 0;
 var isDrawing = false;
 var eraserMode = false;
 var highlighterMode = false;
-
+var brushOpacity = 1;
 var cursorStyle = document.createElement('style');
 document.head.appendChild(cursorStyle);
 
@@ -29,7 +29,7 @@ var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, highlighte
     }
     if (inputColor == 'e') { //Eraser mode
         ctx.globalCompositeOperation = 'destination-out';
-        inputColor = 'rgba(0,0,0,1)';
+        inputColor = `rgba(0,0,0,${brushOpacity})`;
     } else {
         ctx.globalCompositeOperation = 'source-over';
     }
@@ -235,14 +235,13 @@ function updateeraser(e) {
 var highlight_button = document.getElementById('highlight_button');
 function updatehighlight(e) {
     highlighterMode = !highlighterMode;
-    brushOpacity = highlightMode ? 1 : 0.5;
-    if (highlight_button.classList.contains("btn-light")) {
-        highlight_button.classList.remove("btn-light");
-        highlight_button.classList.add("btn-dark");
+    if (highlighterMode) {
+        brushOpacity = 0.5; 
+        highlight_button.style.background=color;
     }
-    else if (highlight_button.classList.contains("btn-dark")) {
-        highlight_button.classList.remove("btn-dark");
-        highlight_button.classList.add("btn-light");
+    else {
+        brushOpacity = 1; 
+        highlight_button.style.background="#a9a9a9";
     }
 }
 
