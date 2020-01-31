@@ -5,6 +5,8 @@ var canvases = document.getElementsByClassName('documentCanvas');
 var pageContainer = document.getElementById('pageContainer');
 var ctxArr = [];
 
+var canDraw = false;
+
 var lineWidth = 3;
 var color = 'rgba(0,0,0,1)';
 var prevX = 0;
@@ -80,6 +82,10 @@ socket.on('message', function(msg) {
     console.log(msg);
 });
 
+socket.on('enableDraw', function() {
+    canDraw = true;
+});
+
 for (var page = 0; page < canvases.length; page++) {
 
     let canvasNum = page;
@@ -89,14 +95,16 @@ for (var page = 0; page < canvases.length; page++) {
     ctxArr.push(currCtx);
 
     canvases[canvasNum].addEventListener('mousedown', function(e) {
-        prevX = e.offsetX;
-        prevY = e.offsetY;
-        isDrawing = true;
-        drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
+        if (canDraw) {
+            prevX = e.offsetX;
+            prevY = e.offsetY;
+            isDrawing = true;
+            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
+        }
     });
 
     canvases[canvasNum].addEventListener('touchstart', function(e) {
-        if (e.touches.length == 1) {
+        if (canDraw && e.touches.length == 1) {
             var rect = e.target.getBoundingClientRect();
             var bodyRect = document.body.getBoundingClientRect();
             prevX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
@@ -110,7 +118,7 @@ for (var page = 0; page < canvases.length; page++) {
     });
 
     canvases[canvasNum].addEventListener('mousemove', function(e) {
-        if (isDrawing) {
+        if (canDraw && isDrawing) {
             drawLine(canvasNum, prevX, prevY, e.offsetX, e.offsetY, lineWidth, eraserMode ? 'e' : color);
             prevX = e.offsetX;
             prevY = e.offsetY;
@@ -118,7 +126,7 @@ for (var page = 0; page < canvases.length; page++) {
     });
 
     canvases[canvasNum].addEventListener('touchmove', function(e) {
-        if (e.touches.length == 1) {
+        if (canDraw && e.touches.length == 1) {
             var rect = e.target.getBoundingClientRect();
             var bodyRect = document.body.getBoundingClientRect();
             offsetX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);

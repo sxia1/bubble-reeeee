@@ -24,6 +24,7 @@ dbtools = Database.DBTools(app)
 lineStorage = { # Setup for temporary line storage may change depending on support for multiple pages
     # documentID : {
     #     'connectedUsers' : {request.sid},
+    #     'write' : {request.sid},
     #     'lines' : [
     #         [page, x0, y0, x1, y1, lineWidth, 'rgba(r,g,b,a)' or 'e']
     #     ]
@@ -176,8 +177,14 @@ def documentPage(documentID):
 	if not guest:
 		user = session['user']
 	if docIsPublic:
+		length = dbtools.checkLength(documentID)
+		URLS = []
+		DIMENSIONS = []
+		for x in range(length):
+			URLS.append(documentID + '?num=' + str(x))
+			DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
 		print(dbtools.checkPublic(documentID))
-		return render_template("document.html", docId = documentID, guest = guest, user = user, public = dbtools.checkPublic(documentID), owner = False)
+		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS), public = dbtools.checkPublic(documentID), owner = False)
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		print(dbtools.checkPublic(documentID), dbtools.checkOwner(user,documentID))
@@ -206,6 +213,7 @@ def disconnectFromDoc():
     print(lineStorage[currDocID]['connectedUsers'])
     print(f"{len(lineStorage[currDocID]['connectedUsers'])} users remaining in {currDocID}")
     if len(lineStorage[currDocID]['connectedUsers']) == 0:
+        print('Saved overlay.')
         dbtools.updateOverlay(currDocID, lineStorage[currDocID]['lines'])
         lineStorage.pop(currDocID)
     connectedUsers.pop(request.sid)
@@ -233,18 +241,26 @@ def joinDocument(documentID):
                 receivedLines = []
             lineStorage[documentID] = {
                 'connectedUsers' : {request.sid},
+                'write' : set(),
                 'lines' : receivedLines
             }
         else: # Document already being viewed
             lineStorage[documentID]['connectedUsers'].add(request.sid)
         emit('lines', lineStorage[documentID]['lines'])
         connectedUsers[request.sid] = documentID
+        if 'user' in session and dbtools.checkWrite(session['user'], documentID):
+            lineStorage[documentID]['write'].add(request.sid)
+            emit('enableDraw')
+                
 
 @socketio.on('newLine', namespace = '/document')
 def newLine(line):
     documentID = connectedUsers[request.sid]
-    lineStorage[documentID]['lines'].append(line)
-    emit('newLine', line, broadcast = True, include_self = False, room = documentID)
+    if request.sid not in lineStorage[documentID]['write']:
+        send('You are not permitted to write in this document.')
+    else:
+        lineStorage[documentID]['lines'].append(line)
+        emit('newLine', line, broadcast = True, include_self = False, room = documentID)
 
 @socketio.on('addCollab', namespace = '/document')
 def addCollab(data):

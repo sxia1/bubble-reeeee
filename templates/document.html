@@ -9,13 +9,25 @@
         <h2>file_name.pdf</h2>
         </div>
         <div class="col-sm text-right">
-            <button type="button" class="btn btn-success doc_buttons">public <i class="material-icons md-doc">lock_open</i></button>
-            <button type="button" class="btn btn-danger doc_buttons">private <i class="material-icons md-doc">lock</i></button>
+            {% if pub %}
+            <button type="button" class="btn btn-success doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
+            {% endif %}
+            {% if not pub %}
+            <button type="button" class="btn btn-danger doc_buttons {{ '' if owner else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
+            {% endif %}
             <button type="button" class="btn btn-secondary doc_buttons" data-toggle="modal" data-target="#exampleModal">collaborate <i class="material-icons md-doc">people_alt</i></button>
         </div>
     </div>
 
 
+
+<div class="fixed-bottom tools">
+<button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+  Popover on top
+</button>
+<button type="button" class="btn btn-primary btn-circle btn-md" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><i class="material-icons md-30">edit</i></button> 
+</div>
+ 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -26,6 +38,26 @@
                 </button>
             </div>
         <div class="modal-body">
+            <form>
+                <div class="row">
+                    <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitch1"></div>
+                    <label for="collaborator" class="col-auto col-form-label">Add collaborator</label>
+                    <div class="col-auto" style="padding: 0 0 0 15px;"><input type="text" class="form-control" id="collaborator" style="border-radius: .25rem 0 0 .25rem;"></div>
+                    <button type="submit" class="btn btn-sm btn-primary" style="border-radius: 0 .25rem .25rem 0;"><i class="material-icons md-mod">person_add</i></button>
+                </div>
+            </form>
+            <div>
+                <div class="auth_user">
+                    <div class="auser">{{user}} <button class="btn btn-sm btn-info doc_buttons auth_buttons">owner</button></div>
+                </div>
+                <div class="auth_user">
+                    <div class="auser">usrname <button class="btn btn-sm btn-success doc_buttons auth_buttons">read</button></div>
+                </div>
+                <div class="auth_user">
+                    <div class="auser">usrname <button class="btn btn-sm btn-success doc_buttons auth_buttons">write</button></div>
+                </div>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -43,11 +75,14 @@
     </div>
 </div>
 
-    <button type="button" class="btn btn btn-danger doc_buttons_l">delete <i class="material-icons md-18">delete_outline</i></button>
-
 {% endblock %}
 
 {% block extraScripts %}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/wsdocument.js') }}"></script>
+    <script> 
+    $(document).ready(function(){ 
+        $('[data-toggle="popover"]').popover();    
+    }); 
+    </script> 
 {% endblock %}

@@ -16,8 +16,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata|Open+Sans&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="static/css/base.css">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 
   </head>
@@ -100,7 +98,7 @@
         <div class="form_block">
             <form enctype="multipart/form-data" action="/uploadDoc" method="post">
                 <div class="form-group row">
-                    <div class="col-3">
+                    <div class="col-5">
                         <input class="form-control" id="docName" name="docName" type="text" placeholder="file_name.pdf">
                     </div>
                     <div class="col-auto">
@@ -119,16 +117,16 @@
 	  	<div class="container">
             {% for each in docs %}
                 <div class="row">
-                    <div class="col-sm">
+                    <div class="col-1">
                     <a href="{{'/document/%s'%each[0]}}">{{each[1]}}</a>
                     </div>
                     <div class="col-sm">
-                    <button class="btn btn-sm btn-info doc_buttons auth_buttons">owner</button></div>
+                    <button class="btn btn-sm btn-info doc_buttons auth_buttons">owner</button>
                     </div>
                 </div>
-				{% endfor %}
-			{% endif %}
+			{% endfor %}
         </div>
+	    {% endif %}
 	    {% endblock %}
     </div>
 

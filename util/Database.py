@@ -116,10 +116,8 @@ class DBTools:
 		)
 
 	def checkWrite(self, username, docID):
-		doc = self.mongo.db.collabs.find({'docID' : docID}).limit(1)
-		if doc:
-			return doc[0]['write']
-		return False
+		doc = self.mongo.db.collabs.find({'docID' : docID, 'collab' : username}).limit(1)
+		return (doc.count() != 0 and doc[0]['write']) or self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() != 0
 
 	def getPage(self, docID, num):
 		page = self.mongo.db.img.find({'docID' : docID, 'num' : num})

@@ -5,3 +5,4 @@ document.querySelector('.custom-file-input').addEventListener('change',function(
     nextSibling.innerText = fileName;
     document.getElementById("docName").value=fileName;
 })
+
