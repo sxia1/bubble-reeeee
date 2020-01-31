@@ -13,14 +13,20 @@ var prevX = 0;
 var prevY = 0;
 var isDrawing = false;
 var eraserMode = false;
+var highlighterMode = false;
 
 var cursorStyle = document.createElement('style');
 document.head.appendChild(cursorStyle);
 
 
-var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack = true) {
+var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, highlighter, sendBack = true) {
     var ctx = ctxArr[page];
     ctx.lineWidth = inputWidth;
+    if (highlighter) {
+        ctx.lineCap = 'butt';
+    } else {
+        ctx.lineCap = 'round';
+    }
     if (inputColor == 'e') { //Eraser mode
         ctx.globalCompositeOperation = 'destination-out';
         inputColor = 'rgba(0,0,0,1)';
@@ -33,7 +39,7 @@ var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack =
     ctx.strokeStyle = inputColor
     ctx.stroke();
     if (sendBack) {
-        socket.emit('newLine', [page, x0, y0, x1, y1, inputWidth, inputColor]);
+        socket.emit('newLine', [page, x0, y0, x1, y1, inputWidth, inputColor, highlighter]);
     }
 }
 
@@ -71,12 +77,12 @@ socket.on('connect', function() { //Executed upon opening the site
 socket.on('lines', function(lines) {
     for (var i = 0; i < lines.length; i++) {
         var currLine = lines[i];
-        drawLine(currLine[0], currLine[1], currLine[2], currLine[3], currLine[4], currLine[5], currLine[6], sendBack = false);
+        drawLine(currLine[0], currLine[1], currLine[2], currLine[3], currLine[4], currLine[5], currLine[6], currLine[7], sendBack = false);
     }
 });
 
 socket.on('newLine', function(line) {
-    drawLine(line[0], line[1], line[2], line[3], line[4], line[5], line[6], sendBack = false);
+    drawLine(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], sendBack = false);
 });
 
 socket.on('message', function(msg) {
@@ -100,7 +106,7 @@ for (var page = 0; page < canvases.length; page++) {
             prevX = e.offsetX;
             prevY = e.offsetY;
             isDrawing = true;
-            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
+            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color, highlighterMode);
         }
     });
 
@@ -111,7 +117,7 @@ for (var page = 0; page < canvases.length; page++) {
             prevX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
             prevY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
             isDrawing = true;
-            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color);
+            drawLine(canvasNum, prevX, prevY, prevX, prevY, lineWidth, eraserMode ? 'e' : color, highlighterMode);
             if (e.cancelable) {
                 e.preventDefault();
             }
@@ -120,7 +126,7 @@ for (var page = 0; page < canvases.length; page++) {
 
     canvases[canvasNum].addEventListener('mousemove', function(e) {
         if (canDraw && isDrawing) {
-            drawLine(canvasNum, prevX, prevY, e.offsetX, e.offsetY, lineWidth, eraserMode ? 'e' : color);
+            drawLine(canvasNum, prevX, prevY, e.offsetX, e.offsetY, lineWidth, eraserMode ? 'e' : color, highlighterMode);
             prevX = e.offsetX;
             prevY = e.offsetY;
         }
@@ -133,7 +139,7 @@ for (var page = 0; page < canvases.length; page++) {
             offsetX = e.targetTouches[0].pageX - (rect.left - bodyRect.left);
             offsetY = e.targetTouches[0].pageY - (rect.top - bodyRect.top);
             if (isDrawing) {
-                drawLine(canvasNum, prevX, prevY, offsetX, offsetY, lineWidth, eraserMode ? 'e' : color);
+                drawLine(canvasNum, prevX, prevY, offsetX, offsetY, lineWidth, eraserMode ? 'e' : color, highlighterMode);
                 prevX = offsetX;
                 prevY = offsetY;
             }
