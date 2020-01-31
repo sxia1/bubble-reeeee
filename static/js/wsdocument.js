@@ -23,6 +23,7 @@ var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, sendBack =
     ctx.lineWidth = inputWidth;
     if (inputColor == 'e') { //Eraser mode
         ctx.globalCompositeOperation = 'destination-out';
+        inputColor = 'rgba(0,0,0,1)';
     } else {
         ctx.globalCompositeOperation = 'source-over';
     }
@@ -91,7 +92,7 @@ for (var page = 0; page < canvases.length; page++) {
     let canvasNum = page;
 
     var currCtx = canvases[canvasNum].getContext('2d');
-    currCtx.lineCap = 'round';
+    currCtx.lineCap = 'butt';
     ctxArr.push(currCtx);
 
     canvases[canvasNum].addEventListener('mousedown', function(e) {
@@ -206,7 +207,7 @@ function updatecolor(jscolor) {
     // 'jscolor' instance can be used as a string
     console.log(jscolor);
     console.log(jscolor.valueElement.value);
-    color = jscolor.valueElement.value;
+    color = `rgba(${jscolor.rgb[0]},${jscolor.rgb[1]},${jscolor.rgb[2]},${brushOpacity})`;
     console.log(color);
 }
 
@@ -222,6 +223,20 @@ function updateeraser(e) {
         eraser_button.classList.remove("btn-dark");
         eraser_button.classList.add("btn-light");
         eraser_button.childNodes[0].style.filter="invert(0)";
+    }
+}
+
+var highlight_button = document.getElementById('highlight_button');
+function updatehighlight(e) {
+    highlighterMode = !highlighterMode;
+    brushOpacity = highlightMode ? 1 : 0.5;
+    if (highlight_button.classList.contains("btn-light")) {
+        highlight_button.classList.remove("btn-light");
+        highlight_button.classList.add("btn-dark");
+    }
+    else if (highlight_button.classList.contains("btn-dark")) {
+        highlight_button.classList.remove("btn-dark");
+        highlight_button.classList.add("btn-light");
     }
 }
 
