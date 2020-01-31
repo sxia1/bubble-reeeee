@@ -177,7 +177,13 @@ def documentPage(documentID):
 	if not guest:
 		user = session['user']
 	if docIsPublic:
-		return render_template("document.html", docId = documentID, guest = guest, user = user)
+		length = dbtools.checkLength(documentID)
+		URLS = []
+		DIMENSIONS = []
+		for x in range(length):
+			URLS.append(documentID + '?num=' + str(x))
+			DIMENSIONS.append(dbtools.getPage(documentID, x)['size'])
+		return render_template("document.html", guest = guest, user = user, URLS = zip(URLS,DIMENSIONS))
 	if "user" in session:
 		userHasPermission = dbtools.checkAuth(session['user'], documentID)
 		if userHasPermission:
