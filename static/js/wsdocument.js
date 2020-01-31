@@ -188,14 +188,14 @@ pubpriv.addEventListener("click", function(e) {
         event.preventDefault();
         return;
     }
-    if (pubpriv.classList.contains("btn-success")) {
-        setVisibility(false);
+    if (pubpriv.classList.contains("btn-success")) { // currently public
+        setVisibility(false); // to private
         pubpriv.classList.remove("btn-success");
         pubpriv.classList.add("btn-danger");
         pubpriv.innerHTML = 'private <i class="material-icons md-doc">lock</i>'; 
     }
-    else if (pubpriv.classList.contains("btn-danger")) {
-        setVisibility(true);
+    else if (pubpriv.classList.contains("btn-danger")) { // currently private
+        setVisibility(true); // to public 
         pubpriv.classList.remove("btn-danger");
         pubpriv.classList.add("btn-success");
         pubpriv.innerHTML = 'public <i class="material-icons md-doc">lock_open</i>'; 

@@ -9,13 +9,15 @@
         <h2>{{ detail['document_name'] }}</h2>
         </div>
         <div class="col-sm text-right">
-            {% if detail['public'] %}
+            {% if not detail['public'] %}
             <button type="button" class="btn btn-danger doc_buttons {{ '' if detail['owner'] == user else 'disabled' }}" id="pubpriv">private <i class="material-icons md-doc">lock</i></button>
             {% endif %}
-            {% if not detail['public'] %}
+            {% if detail['public'] %}
             <button type="button" class="btn btn-success doc_buttons {{ '' if detail['owner'] == user else '' }}" id="pubpriv">public <i class="material-icons md-doc">lock_open</i></button>
             {% endif %}
+            {% if detail['owner'] == user %}
             <button type="button" class="btn btn-secondary doc_buttons" data-toggle="modal" data-target="#exampleModal">collaborate <i class="material-icons md-doc">people_alt</i></button>
+            {% endif %}
         </div>
     </div>
 

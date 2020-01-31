@@ -282,21 +282,21 @@ def removeCollab(collaborator):
 @socketio.on('setVisibility', namespace = '/document')
 def setPublic(public):
     if 'user' not in session or request.sid not in connectedUsers:
-        send('Collaborator not removed.')
+        send('Visibility changed.')
         return
     if type(public) != type(True):
         send('Invalid data.')
         return
-    print(dbtools.checkPublic(connectedUsers[request.sid]))
+    # print(dbtools.checkPublic(connectedUsers[request.sid]))
     print(public)
     dbtools.setPublic(session['user'], connectedUsers[request.sid], public)
-    print(dbtools.checkPublic(connectedUsers[request.sid]))
+    # print(dbtools.checkPublic(connectedUsers[request.sid]))
     send('Visibility not changed.')
 
 @socketio.on('connect', namespace = '/socketioTest')
 def userConnect():
     join_room("testRoom")
-    print(f"A user has connected to the test page with sid {request.sid}")
+    # print(f"A user has connected to the test page with sid {request.sid}")
 
 @socketio.on('sendHi', namespace = '/socketioTest')
 def sendHi():
