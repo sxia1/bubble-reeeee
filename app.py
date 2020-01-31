@@ -243,6 +243,34 @@ def newLine(line):
     lineStorage[documentID]['lines'].append(line)
     emit('newLine', line, broadcast = True, include_self = False, room = documentID)
 
+@socketio.on('addCollab', namespace = '/document')
+def addCollab(data):
+    # data = [collaboratorUsername, hasWriteAccess]
+    if 'user' not in session or request.sid not in connectedUsers:
+        send('Collaborator not added.')
+        return
+    dbtools.addCollab(session['user'], connectedUsers[request.sid], data[0], data[1])
+    send('Collaborator added.')
+
+@socketio.on('removeCollab', namespace = '/document')
+def removeCollab(collaborator):
+    if 'user' not in session or request.sid not in connectedUsers:
+        send('Collaborator not removed.')
+        return
+    dbtools.addCollab(session['user'], connectedUsers[request.sid], collaborator)
+    send('Collaborator removed.')
+
+@socketio.on('setVisibility', namespace = '/document')
+def setPublic(public):
+    if 'user' not in session or request.sid not in connectedUsers:
+        send('Collaborator not removed.')
+        return
+    if type(public) != type(True):
+        send('Invalid data.')
+        return
+    dbtools.setPublic(session['user'], connectedUsers[request.sid], public)
+    send('Document visibility set.')
+
 @socketio.on('connect', namespace = '/socketioTest')
 def userConnect():
     join_room("testRoom")

@@ -46,6 +46,18 @@ var changeCursor = function() {
 
 changeCursor();
 
+var setVisibility = function(public) {
+    socket.emit('setVisibility', public);
+}
+
+var addCollab = function(collaborator, write) {
+    socket.emit('addCollab', [collaborator, write]);
+}
+
+var removeCollab = function(collaborator) {
+    socket.emit('removeCollab', collaborator);
+}
+
 socket.on('connect', function() { //Executed upon opening the site
     var documentID = (new URL(document.location)).pathname.split('/').pop();
     socket.emit('joinDocument', documentID);

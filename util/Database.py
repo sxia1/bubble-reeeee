@@ -67,14 +67,12 @@ class DBTools:
 			'write' : write
 		})
 
-	def removeCollab(self, docID, collab):
+	def removeCollab(self, username, docID, collab):
 		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
 			return False
 		self.mongo.db.collabs.remove({
 			'docID' : docID,
-			'collab' : collab,
-			'start' : start,
-			'duration' : duration
+			'collab' : collab
 		})
 
 	def updateOverlay(self, docID, newOverlay):
@@ -104,6 +102,7 @@ class DBTools:
 	def setPublic(self, username, docID, public):
 		if self.mongo.db.docs.find({'owner' : username, 'docID' : docID}).limit(1).count() == 0:
 			return False
+		doc = self.mongo.db.docs.find({'docID': docID}).limit(1)
 		doc.self.mongo.db.docs.update(
 			{'docID' : docId},
 			{'$set' : {
