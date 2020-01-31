@@ -29,14 +29,13 @@ var drawLine = function(page, x0, y0, x1, y1, inputWidth, inputColor, highlighte
     }
     if (inputColor == 'e') { //Eraser mode
         ctx.globalCompositeOperation = 'destination-out';
-        inputColor = `rgba(0,0,0,${brushOpacity})`;
     } else {
         ctx.globalCompositeOperation = 'source-over';
     }
     ctx.beginPath();
     ctx.moveTo(x0, y0); //Offset x and y by vector
     ctx.lineTo(x1, y1); //Draw line to center of the next circle
-    ctx.strokeStyle = inputColor
+    ctx.strokeStyle = inputColor == 'e' ? 'rgba(0,0,0,1)' : inputColor;
     ctx.stroke();
     if (sendBack) {
         socket.emit('newLine', [page, x0, y0, x1, y1, inputWidth, inputColor, highlighter]);
